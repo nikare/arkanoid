@@ -3,16 +3,25 @@ import platformSrc from '../images/platform.png';
 import ballSrc from '../images/ball.png';
 
 export class Game {
+    private canvas: HTMLCanvasElement | null = null;
     private ctx: CanvasRenderingContext2D | null = null;
-    private sprites = {
+    private sprites: { [key: string]: HTMLImageElement } = {
         background: new Image(),
         platform: new Image(),
         ball: new Image(),
     };
+    private platform = {
+        x: 514.5,
+        y: 647,
+    };
+    private ball = {
+        x: 620,
+        y: 607,
+    };
 
     private init() {
-        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-        this.ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+        this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
+        this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     }
 
     private preload(callback: () => void) {
@@ -20,12 +29,14 @@ export class Game {
         this.sprites.platform.src = platformSrc;
         this.sprites.ball.src = ballSrc;
 
-        const sprites: { [key: string]: HTMLImageElement } = this.sprites;
-        const imgNames = Object.keys(sprites);
+        const _sprites = Object.keys(this.sprites);
+        let loaded = 0;
 
-        imgNames.forEach((imgName, index) => {
-            sprites[imgName].addEventListener('load', () => {
-                if (index === imgNames.length - 1) {
+        _sprites.forEach((img) => {
+            this.sprites[img].addEventListener('load', () => {
+                ++loaded;
+
+                if (loaded === _sprites.length) {
                     callback();
                 }
             });
@@ -39,10 +50,10 @@ export class Game {
     }
 
     private render() {
-        if (!this.ctx) return;
-        this.ctx.drawImage(this.sprites.background, 0, 0);
-        this.ctx.drawImage(this.sprites.platform, 0, 0);
-        this.ctx.drawImage(this.sprites.ball, 0, 0);
+        if (!this.canvas || !this.ctx) return;
+        this.ctx.drawImage(this.sprites.background, 0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.drawImage(this.sprites.platform, this.platform.x, this.platform.y);
+        this.ctx.drawImage(this.sprites.ball, this.ball.x, this.ball.y);
     }
 
     start() {
