@@ -1,3 +1,4 @@
 import { Game } from './Game';
 
-new Game().start();
+const game = new Game();
+game.start();

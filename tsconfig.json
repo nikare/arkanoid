@@ -8,8 +8,7 @@
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
         "noImplicitAny": true,
-        "noEmitOnError": true,
-        "strictNullChecks": true
+        "noEmitOnError": true
     },
     "exclude": ["node_modules"]
 }
