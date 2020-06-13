@@ -13,8 +13,15 @@ export class Game {
         block: new Image(),
     };
     private platform = {
+        velocity: 6,
+        dx: 0,
         x: 514.5,
         y: 647,
+        move() {
+            if (this.dx) {
+                this.x += this.dx;
+            }
+        },
     };
     private ball = {
         x: 620,
@@ -27,6 +34,24 @@ export class Game {
     constructor() {
         this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
+    }
+
+    private init() {
+        this.setEvents();
+    }
+
+    private setEvents() {
+        window.addEventListener('keydown', (event) => {
+            if (event.keyCode === 37) {
+                this.platform.dx = -this.platform.velocity;
+            } else if (event.keyCode === 39) {
+                this.platform.dx = +this.platform.velocity;
+            }
+        });
+
+        window.addEventListener('keyup', (event) => {
+            this.platform.dx = 0;
+        });
     }
 
     private preload(callback: () => void) {
@@ -42,6 +67,7 @@ export class Game {
             this.sprites[img].addEventListener('load', () => {
                 if (++loaded === _sprites.length) {
                     callback();
+                    this.canvas.classList.add('loaded');
                 }
             });
         });
@@ -58,10 +84,15 @@ export class Game {
         }
     }
 
+    private update() {
+        this.platform.move();
+    }
+
     private run() {
         window.requestAnimationFrame(() => {
-            this.canvas!.classList.add('loaded');
+            this.update();
             this.render();
+            this.run();
         });
     }
 
@@ -79,6 +110,7 @@ export class Game {
     }
 
     start() {
+        this.init();
         this.preload(() => {
             this.run();
             this.create();
