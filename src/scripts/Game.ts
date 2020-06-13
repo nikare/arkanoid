@@ -3,6 +3,11 @@ import platformSrc from '../images/platform.png';
 import ballSrc from '../images/ball.png';
 import blockSrc from '../images/block.png';
 
+enum KEYS {
+    LEFT = 37,
+    RIGHT = 39,
+}
+
 export class Game {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
@@ -17,9 +22,20 @@ export class Game {
         dx: 0,
         x: 514.5,
         y: 647,
-        move() {
+        start(direction: KEYS) {
+            if (direction === KEYS.LEFT) {
+                this.dx = -this.velocity;
+            } else if (direction === KEYS.RIGHT) {
+                this.dx = +this.velocity;
+            }
+        },
+        stop() {
+            this.dx = 0;
+        },
+        move(ball: { x: number; y: number }) {
             if (this.dx) {
                 this.x += this.dx;
+                ball.x += this.dx;
             }
         },
     };
@@ -42,15 +58,13 @@ export class Game {
 
     private setEvents() {
         window.addEventListener('keydown', (event) => {
-            if (event.keyCode === 37) {
-                this.platform.dx = -this.platform.velocity;
-            } else if (event.keyCode === 39) {
-                this.platform.dx = +this.platform.velocity;
+            if (event.keyCode === KEYS.LEFT || event.keyCode === KEYS.RIGHT) {
+                this.platform.start(event.keyCode);
             }
         });
 
-        window.addEventListener('keyup', (event) => {
-            this.platform.dx = 0;
+        window.addEventListener('keyup', () => {
+            this.platform.stop();
         });
     }
 
@@ -66,8 +80,8 @@ export class Game {
         _sprites.forEach((img) => {
             this.sprites[img].addEventListener('load', () => {
                 if (++loaded === _sprites.length) {
-                    callback();
                     this.canvas.classList.add('loaded');
+                    callback();
                 }
             });
         });
@@ -85,7 +99,7 @@ export class Game {
     }
 
     private update() {
-        this.platform.move();
+        this.platform.move(this.ball);
     }
 
     private run() {
