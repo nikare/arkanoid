@@ -49,11 +49,14 @@ export class Game {
             }
         },
         collide(block: IBlock) {
+            const x = this.x + this.dx;
+            const y = this.y + this.dy;
+
             if (
-                this.x + this.width > block.x &&
-                this.x < block.x + block.width &&
-                this.y + this.height > block.y &&
-                this.y < block.y + block.height
+                x + this.width > block.x &&
+                x < block.x + block.width &&
+                y + this.height > block.y &&
+                y < block.y + block.height
             ) {
                 return true;
             }
