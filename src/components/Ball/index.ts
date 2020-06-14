@@ -77,6 +77,10 @@ export class Ball {
     }
 
     bumpPlatform(platform: Platform) {
+        if (platform.dx) {
+            this.x += platform.dx;
+        }
+
         if (this.dy > 0) {
             const touchX = this.x + this.width / 2;
             this.dy = -this.velocity;
