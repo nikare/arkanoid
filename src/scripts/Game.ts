@@ -1,20 +1,8 @@
-import backgroundSrc from '../images/background.png';
+import backgroundSrc from '../images/background.jpg';
 import platformSrc from '../images/platform.png';
 import ballSrc from '../images/ball.png';
 import blockSrc from '../images/block.png';
-
-enum KEYS {
-    LEFT = 37,
-    RIGHT = 39,
-    SPACE = 32,
-}
-
-interface IBlock {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-}
+import { KEYS, IBlock, IPlatform, IBall } from './interfaces';
 
 export class Game {
     private canvas: HTMLCanvasElement;
@@ -27,7 +15,7 @@ export class Game {
     };
     private width = 1280;
     private height = 720;
-    private ball = {
+    private ball: IBall = {
         dx: 0,
         dy: 0,
         velocity: 10,
@@ -48,15 +36,15 @@ export class Game {
                 this.x += this.dx;
             }
         },
-        collide(block: IBlock) {
+        collide(obstacle: IBlock | IPlatform) {
             const x = this.x + this.dx;
             const y = this.y + this.dy;
 
             if (
-                x + this.width > block.x &&
-                x < block.x + block.width &&
-                y + this.height > block.y &&
-                y < block.y + block.height
+                x + this.width > obstacle.x &&
+                x < obstacle.x + obstacle.width &&
+                y + this.height > obstacle.y &&
+                y < obstacle.y + obstacle.height
             ) {
                 return true;
             }
@@ -66,11 +54,13 @@ export class Game {
             this.dy *= -1;
         },
     };
-    private platform = {
+    private platform: IPlatform = {
         velocity: 15,
         dx: 0,
         x: 514.5,
         y: 647,
+        width: 0,
+        height: 0,
         ball: this.ball,
         fire(random: number) {
             if (this.ball.motionless) {
@@ -160,10 +150,10 @@ export class Game {
     private update() {
         this.platform.move();
         this.ball.move();
+
         this.blocks.forEach((block) => {
             if (this.ball.collide(block)) {
                 this.ball.bumpBlock(block);
-                console.log('collide!');
             }
         });
     }
