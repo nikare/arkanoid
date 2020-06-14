@@ -9,6 +9,13 @@ enum KEYS {
     SPACE = 32,
 }
 
+interface IBlock {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
 export class Game {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
@@ -26,6 +33,8 @@ export class Game {
         velocity: 10,
         x: 620,
         y: 607,
+        width: 40,
+        height: 40,
         motionless: true,
         start(random: number) {
             this.dy = -this.velocity;
@@ -38,6 +47,20 @@ export class Game {
             if (this.dx) {
                 this.x += this.dx;
             }
+        },
+        collide(block: IBlock) {
+            if (
+                this.x + this.width > block.x &&
+                this.x < block.x + block.width &&
+                this.y + this.height > block.y &&
+                this.y < block.y + block.height
+            ) {
+                return true;
+            }
+            return false;
+        },
+        bumpBlock(block: IBlock) {
+            this.dy *= -1;
         },
     };
     private platform = {
@@ -73,7 +96,7 @@ export class Game {
     };
     private rows = 4;
     private cols = 8;
-    private blocks: { x: number; y: number }[] = [];
+    private blocks: IBlock[] = [];
 
     constructor() {
         this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -124,6 +147,8 @@ export class Game {
                 this.blocks.push({
                     x: 115 * col + 182,
                     y: 44 * row + 90,
+                    width: 111,
+                    height: 39,
                 });
             }
         }
@@ -132,6 +157,12 @@ export class Game {
     private update() {
         this.platform.move();
         this.ball.move();
+        this.blocks.forEach((block) => {
+            if (this.ball.collide(block)) {
+                this.ball.bumpBlock(block);
+                console.log('collide!');
+            }
+        });
     }
 
     private run() {
