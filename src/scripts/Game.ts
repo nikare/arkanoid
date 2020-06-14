@@ -18,30 +18,37 @@ export class Game {
         ball: new Image(),
         block: new Image(),
     };
+    private width = 1280;
+    private height = 720;
     private ball = {
+        dx: 0,
         dy: 0,
-        velocity: 3,
+        velocity: 10,
         x: 620,
         y: 607,
         motionless: true,
-        start() {
+        start(random: number) {
             this.dy = -this.velocity;
+            this.dx = random;
         },
         move() {
             if (this.dy) {
                 this.y += this.dy;
             }
+            if (this.dx) {
+                this.x += this.dx;
+            }
         },
     };
     private platform = {
-        velocity: 6,
+        velocity: 15,
         dx: 0,
         x: 514.5,
         y: 647,
         ball: this.ball,
-        fire() {
+        fire(random: number) {
             if (this.ball.motionless) {
-                this.ball.start();
+                this.ball.start(random);
                 this.ball.motionless = false;
             }
         },
@@ -80,7 +87,8 @@ export class Game {
     private setEvents() {
         window.addEventListener('keydown', (event) => {
             if (event.keyCode === KEYS.SPACE) {
-                this.platform.fire();
+                const random = this.random(-this.ball.velocity, +this.ball.velocity);
+                this.platform.fire(random);
             } else if (event.keyCode === KEYS.LEFT || event.keyCode === KEYS.RIGHT) {
                 this.platform.start(event.keyCode);
             }
@@ -135,7 +143,8 @@ export class Game {
     }
 
     private render() {
-        this.ctx.drawImage(this.sprites.background, 0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        this.ctx.drawImage(this.sprites.background, 0, 0, this.width, this.height);
         this.ctx.drawImage(this.sprites.platform, this.platform.x, this.platform.y);
         this.ctx.drawImage(this.sprites.ball, this.ball.x, this.ball.y);
         this.renderBlocks();
@@ -153,5 +162,9 @@ export class Game {
             this.run();
             this.create();
         });
+    }
+
+    random(min: number, max: number) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
     }
 }
