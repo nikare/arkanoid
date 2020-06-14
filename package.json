@@ -4,10 +4,9 @@
     "description": "Арканоид. 2D игра на Javascript и HTML5 Canvas",
     "repository": "https://github.com/nikare/arkanoid",
     "homepage": "https://nikare.github.io/arkanoid",
-    "main": "src/index.html",
     "private": "true",
     "license": "MIT",
-    "typings": "src/typings.d.ts",
+    "typings": "typings.d.ts",
     "author": {
         "name": "Nikolay Karetskiy",
         "email": "lynxloner@icloud.com"
@@ -17,8 +16,8 @@
         "npm": ">=6"
     },
     "scripts": {
-        "start": "parcel src/index.html --cache-dir='node_modules/.cache' --out-dir='node_modules/.dist' --port=3000 --open",
-        "build": "parcel build src/index.html --public-url='.' --no-source-maps --no-cache",
+        "start": "parcel public/index.html --cache-dir='node_modules/.cache' --out-dir='node_modules/.dist' --port=3000 --open",
+        "build": "parcel build public/index.html --public-url='.' --no-source-maps --no-cache",
         "predeploy": "npm run build",
         "deploy": "gh-pages -d dist"
     },

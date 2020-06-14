@@ -12,6 +12,6 @@ body {
 
 #canvas {
     &:not(.loaded) {
-        background: url('../images/loader.gif') 50% no-repeat;
+        background: url('./images/loader.gif') 50% no-repeat;
     }
 }
