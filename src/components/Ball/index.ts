@@ -43,6 +43,34 @@ export class Ball {
         return false;
     }
 
+    collideWorldBounds(canvasWidth: number, canvasHeight: number) {
+        const x = this.x + this.dx;
+        const y = this.y + this.dy;
+
+        const ballLeft = x;
+        const ballRight = ballLeft + this.width;
+        const ballTop = y;
+        const ballBottom = ballTop + this.height;
+
+        const worldLeft = 0;
+        const worldRight = canvasWidth;
+        const worldTop = 0;
+        const worldBottom = canvasHeight;
+
+        if (ballLeft < worldLeft) {
+            this.x = 0;
+            this.dx = this.velocity;
+        } else if (ballRight > worldRight) {
+            this.x = worldRight - this.width;
+            this.dx = -this.velocity;
+        } else if (ballTop < worldTop) {
+            this.y = 0;
+            this.dy = this.velocity;
+        } else if (ballBottom > worldBottom) {
+            console.log('Game over!');
+        }
+    }
+
     bumpBlock(block: IBlock) {
         this.dy *= -1;
         block.render = false;

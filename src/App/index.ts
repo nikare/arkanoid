@@ -68,10 +68,11 @@ export class Game {
     }
 
     private update() {
-        this.platform.move();
-        this.ball.move();
         this.collideBlocks();
         this.collidePlatform();
+        this.ball.collideWorldBounds(this.width, this.height);
+        this.platform.move();
+        this.ball.move();
     }
 
     collideBlocks() {
