@@ -61,6 +61,7 @@ export class Game {
                     y: 44 * row + 90,
                     width: 111,
                     height: 39,
+                    render: true,
                 });
             }
         }
@@ -75,7 +76,7 @@ export class Game {
 
     collideBlocks() {
         this.blocks.forEach((block) => {
-            if (this.ball.collide(block)) {
+            if (block.render && this.ball.collide(block)) {
                 this.ball.bumpBlock(block);
             }
         });
@@ -105,7 +106,9 @@ export class Game {
 
     private renderBlocks() {
         this.blocks.forEach((block) => {
-            this.ctx.drawImage(this.imageBlock, block.x, block.y);
+            if (block.render) {
+                this.ctx.drawImage(this.imageBlock, block.x, block.y);
+            }
         });
     }
 

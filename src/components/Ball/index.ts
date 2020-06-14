@@ -45,6 +45,7 @@ export class Ball {
 
     bumpBlock(block: IBlock) {
         this.dy *= -1;
+        block.render = false;
     }
 
     bumpPlatform(platform: Platform) {

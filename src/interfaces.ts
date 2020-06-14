@@ -9,4 +9,5 @@ export interface IBlock {
     y: number;
     width: number;
     height: number;
+    render: boolean;
 }
