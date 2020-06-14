@@ -46,4 +46,10 @@ export class Ball {
     bumpBlock(block: IBlock) {
         this.dy *= -1;
     }
+
+    bumpPlatform(platform: Platform) {
+        const touchX = this.x + this.width / 2;
+        this.dy *= -1;
+        this.dx = this.velocity * platform.getTouchOffset(touchX);
+    }
 }

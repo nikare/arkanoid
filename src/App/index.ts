@@ -15,13 +15,12 @@ export class Game {
     private cols = 8;
     private blocks: IBlock[] = [];
     constructor() {
-        this.canvas = document.createElement('canvas');
+        this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
 
         this.canvas.width = this.width;
         this.canvas.height = this.height;
 
-        document.body.appendChild(this.canvas);
         this.background.src = require('./images/background.jpg');
         this.imageBlock.src = require('./images/block.png');
     }
@@ -70,11 +69,22 @@ export class Game {
     private update() {
         this.platform.move();
         this.ball.move();
+        this.collideBlocks();
+        this.collidePlatform();
+    }
+
+    collideBlocks() {
         this.blocks.forEach((block) => {
             if (this.ball.collide(block)) {
                 this.ball.bumpBlock(block);
             }
         });
+    }
+
+    collidePlatform() {
+        if (this.ball.collide(this.platform)) {
+            this.ball.bumpPlatform(this.platform);
+        }
     }
 
     private run() {
@@ -99,7 +109,7 @@ export class Game {
         });
     }
 
-    random(min: number, max: number) {
+    private random(min: number, max: number) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 

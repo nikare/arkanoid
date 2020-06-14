@@ -7,8 +7,8 @@ export class Platform {
     dx = 0;
     x = 514.5;
     y = 647;
-    width = 0;
-    height = 0;
+    width = 251;
+    height = 41;
     ball: Ball | null;
 
     constructor(ball: Ball) {
@@ -42,5 +42,12 @@ export class Platform {
                 this.ball.x += this.dx;
             }
         }
+    }
+
+    getTouchOffset(x: number): number {
+        const diff = this.x + this.width - x;
+        const offset = this.width - diff;
+        const result = (2 * offset) / this.width;
+        return result - 1;
     }
 }
