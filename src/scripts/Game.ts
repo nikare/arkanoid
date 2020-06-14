@@ -6,6 +6,7 @@ import blockSrc from '../images/block.png';
 enum KEYS {
     LEFT = 37,
     RIGHT = 39,
+    SPACE = 32,
 }
 
 export class Game {
@@ -17,11 +18,33 @@ export class Game {
         ball: new Image(),
         block: new Image(),
     };
+    private ball = {
+        dy: 0,
+        velocity: 3,
+        x: 620,
+        y: 607,
+        motionless: true,
+        start() {
+            this.dy = -this.velocity;
+        },
+        move() {
+            if (this.dy) {
+                this.y += this.dy;
+            }
+        },
+    };
     private platform = {
         velocity: 6,
         dx: 0,
         x: 514.5,
         y: 647,
+        ball: this.ball,
+        fire() {
+            if (this.ball.motionless) {
+                this.ball.start();
+                this.ball.motionless = false;
+            }
+        },
         start(direction: KEYS) {
             if (direction === KEYS.LEFT) {
                 this.dx = -this.velocity;
@@ -32,16 +55,14 @@ export class Game {
         stop() {
             this.dx = 0;
         },
-        move(ball: { x: number; y: number }) {
+        move() {
             if (this.dx) {
                 this.x += this.dx;
-                ball.x += this.dx;
+                if (this.ball.motionless) {
+                    this.ball.x += this.dx;
+                }
             }
         },
-    };
-    private ball = {
-        x: 620,
-        y: 607,
     };
     private rows = 4;
     private cols = 8;
@@ -58,7 +79,9 @@ export class Game {
 
     private setEvents() {
         window.addEventListener('keydown', (event) => {
-            if (event.keyCode === KEYS.LEFT || event.keyCode === KEYS.RIGHT) {
+            if (event.keyCode === KEYS.SPACE) {
+                this.platform.fire();
+            } else if (event.keyCode === KEYS.LEFT || event.keyCode === KEYS.RIGHT) {
                 this.platform.start(event.keyCode);
             }
         });
@@ -99,7 +122,8 @@ export class Game {
     }
 
     private update() {
-        this.platform.move(this.ball);
+        this.platform.move();
+        this.ball.move();
     }
 
     private run() {
