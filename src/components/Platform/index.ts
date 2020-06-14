@@ -50,4 +50,18 @@ export class Platform {
         const result = (2 * offset) / this.width;
         return result - 1;
     }
+
+    collideWorldBounds(canvasWidth: number) {
+        const x = this.x + this.dx;
+
+        const platformLeft = x;
+        const platformRight = platformLeft + this.width;
+
+        const worldLeft = 0;
+        const worldRight = canvasWidth;
+
+        if (platformLeft < worldLeft || platformRight > worldRight) {
+            this.dx = 0;
+        }
+    }
 }

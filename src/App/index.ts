@@ -71,6 +71,7 @@ export class Game {
         this.collideBlocks();
         this.collidePlatform();
         this.ball.collideWorldBounds(this.width, this.height);
+        this.platform.collideWorldBounds(this.width);
         this.platform.move();
         this.ball.move();
     }
