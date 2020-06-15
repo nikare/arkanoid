@@ -1,5 +1,6 @@
 import { Ball } from '../Ball';
 import { KEYS } from '../../interfaces';
+import { App } from '../../App';
 
 export class Platform {
     image = new Image();
@@ -9,17 +10,16 @@ export class Platform {
     y = 647;
     width = 251;
     height = 41;
-    ball: Ball | null;
 
-    constructor(ball: Ball) {
+    constructor(private game: App) {
         this.image.src = require('./platform.png');
-        this.ball = ball;
+        this.game = game;
     }
 
     fire(random: number) {
-        if (this.ball) {
-            this.ball.start(random);
-            this.ball = null;
+        if (this.game.ball.running) {
+            this.game.ball.start(random);
+            this.game.ball.running = false;
         }
     }
 
@@ -38,8 +38,8 @@ export class Platform {
     move() {
         if (this.dx) {
             this.x += this.dx;
-            if (this.ball) {
-                this.ball.x += this.dx;
+            if (this.game.ball) {
+                this.game.ball.x += this.dx;
             }
         }
     }
@@ -51,14 +51,14 @@ export class Platform {
         return result - 1;
     }
 
-    collideWorldBounds(canvasWidth: number) {
+    collideWorldBounds() {
         const x = this.x + this.dx;
 
         const platformLeft = x;
         const platformRight = platformLeft + this.width;
 
         const worldLeft = 0;
-        const worldRight = canvasWidth;
+        const worldRight = this.game.width;
 
         if (platformLeft < worldLeft || platformRight > worldRight) {
             this.dx = 0;

@@ -1,5 +1,6 @@
 import { Platform } from '../index';
 import { IBlock } from '../../interfaces';
+import { App } from '../../App';
 
 export class Ball {
     image = new Image();
@@ -10,9 +11,11 @@ export class Ball {
     y = 607;
     width = 40;
     height = 40;
+    running = false;
 
-    constructor() {
+    constructor(private game: App) {
         this.image.src = require('./ball.png');
+        this.game = game;
     }
 
     start(random: number) {
@@ -43,7 +46,7 @@ export class Ball {
         return false;
     }
 
-    collideWorldBounds(canvasWidth: number, canvasHeight: number) {
+    collideWorldBounds() {
         const x = this.x + this.dx;
         const y = this.y + this.dy;
 
@@ -53,9 +56,9 @@ export class Ball {
         const ballBottom = ballTop + this.height;
 
         const worldLeft = 0;
-        const worldRight = canvasWidth;
+        const worldRight = this.game.width;
         const worldTop = 0;
-        const worldBottom = canvasHeight;
+        const worldBottom = this.game.height;
 
         if (ballLeft < worldLeft) {
             this.x = 0;
@@ -76,15 +79,15 @@ export class Ball {
         block.render = false;
     }
 
-    bumpPlatform(platform: Platform) {
-        if (platform.dx) {
-            this.x += platform.dx;
+    bumpPlatform() {
+        if (this.game.platform.dx) {
+            this.x += this.game.platform.dx;
         }
 
         if (this.dy > 0) {
             const touchX = this.x + this.width / 2;
             this.dy = -this.velocity;
-            this.dx = this.velocity * platform.getTouchOffset(touchX);
+            this.dx = this.velocity * this.game.platform.getTouchOffset(touchX);
         }
     }
 }

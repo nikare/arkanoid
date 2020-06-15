@@ -1,4 +1,4 @@
-import { Game } from './App';
+import { App } from './App';
 
-const game = new Game();
+const game = new App();
 game.start();

@@ -2,18 +2,20 @@ import { Platform, Ball } from '../components';
 import { KEYS, IBlock } from '../interfaces';
 import './app.scss';
 
-export class Game {
-    private canvas: HTMLCanvasElement;
-    private ctx: CanvasRenderingContext2D;
-    private background = new Image();
-    private imageBlock = new Image();
-    private ball = new Ball();
-    private platform = new Platform(this.ball);
-    private width = 1280;
-    private height = 720;
-    private rows = 4;
-    private cols = 8;
-    private blocks: IBlock[] = [];
+export class App {
+    canvas: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+    running = true;
+    background = new Image();
+    imageBlock = new Image();
+    ball = new Ball(this);
+    platform = new Platform(this);
+    width = 1280;
+    height = 720;
+    rows = 4;
+    cols = 8;
+    blocks: IBlock[] = [];
+
     constructor() {
         this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -25,7 +27,7 @@ export class Game {
         this.imageBlock.src = require('./images/block.png');
     }
 
-    private setEvents() {
+    setEvents() {
         window.addEventListener('keydown', (event) => {
             if (event.keyCode === KEYS.SPACE) {
                 const random = this.random(-this.ball.velocity, +this.ball.velocity);
@@ -39,7 +41,7 @@ export class Game {
         });
     }
 
-    private preload(callback: () => void) {
+    preload(callback: () => void) {
         const images = [this.background, this.imageBlock, this.platform.image, this.ball.image];
 
         let loaded = 0;
@@ -53,7 +55,8 @@ export class Game {
         });
     }
 
-    private create() {
+    createBlocks() {
+        this.blocks = [];
         for (let row = this.rows; row--; ) {
             for (let col = this.cols; col--; ) {
                 this.blocks.push({
@@ -67,11 +70,11 @@ export class Game {
         }
     }
 
-    private update() {
+    update() {
         this.collideBlocks();
         this.collidePlatform();
-        this.ball.collideWorldBounds(this.width, this.height);
-        this.platform.collideWorldBounds(this.width);
+        this.ball.collideWorldBounds();
+        this.platform.collideWorldBounds();
         this.platform.move();
         this.ball.move();
     }
@@ -86,19 +89,21 @@ export class Game {
 
     collidePlatform() {
         if (this.ball.collide(this.platform)) {
-            this.ball.bumpPlatform(this.platform);
+            this.ball.bumpPlatform();
         }
     }
 
-    private run() {
-        window.requestAnimationFrame(() => {
-            this.update();
-            this.render();
-            this.run();
-        });
+    run() {
+        if (this.running) {
+            window.requestAnimationFrame(() => {
+                this.update();
+                this.render();
+                this.run();
+            });
+        }
     }
 
-    private render() {
+    render() {
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.drawImage(this.background, 0, 0, this.width, this.height);
         this.ctx.drawImage(this.platform.image, this.platform.x, this.platform.y);
@@ -106,7 +111,7 @@ export class Game {
         this.renderBlocks();
     }
 
-    private renderBlocks() {
+    renderBlocks() {
         this.blocks.forEach((block) => {
             if (block.render) {
                 this.ctx.drawImage(this.imageBlock, block.x, block.y);
@@ -114,7 +119,7 @@ export class Game {
         });
     }
 
-    private random(min: number, max: number) {
+    random(min: number, max: number) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
@@ -122,7 +127,7 @@ export class Game {
         this.setEvents();
         this.preload(() => {
             this.run();
-            this.create();
+            this.createBlocks();
         });
     }
 }
