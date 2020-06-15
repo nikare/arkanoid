@@ -70,7 +70,9 @@ export class Ball {
             this.y = 0;
             this.dy = this.velocity;
         } else if (ballBottom > worldBottom) {
-            console.log('Game over!');
+            this.game.running = false;
+            alert('Вы проиграли');
+            this.game.restart();
         }
     }
 

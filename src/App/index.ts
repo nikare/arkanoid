@@ -123,6 +123,14 @@ export class App {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
+    restart() {
+        this.createBlocks();
+        this.renderBlocks();
+        this.ball = new Ball(this);
+        this.platform = new Platform(this);
+        this.running = true;
+    }
+
     start() {
         this.setEvents();
         this.preload(() => {

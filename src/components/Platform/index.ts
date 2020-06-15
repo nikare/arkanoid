@@ -17,9 +17,9 @@ export class Platform {
     }
 
     fire(random: number) {
-        if (this.game.ball.running) {
+        if (!this.game.ball.running) {
             this.game.ball.start(random);
-            this.game.ball.running = false;
+            this.game.ball.running = true;
         }
     }
 
@@ -38,7 +38,7 @@ export class Platform {
     move() {
         if (this.dx) {
             this.x += this.dx;
-            if (this.game.ball) {
+            if (!this.game.ball.running) {
                 this.game.ball.x += this.dx;
             }
         }
