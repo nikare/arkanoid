@@ -5,7 +5,6 @@ import './app.scss';
 export class App {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    running = true;
     background = new Image();
     imageBlock = new Image();
     ball = new Ball(this);
@@ -14,6 +13,7 @@ export class App {
     height = 720;
     rows = 4;
     cols = 8;
+    score = 0;
     blocks: IBlock[] = [];
 
     constructor() {
@@ -83,6 +83,12 @@ export class App {
         this.blocks.forEach((block) => {
             if (block.render && this.ball.collide(block)) {
                 this.ball.bumpBlock(block);
+                this.score += 10;
+
+                const renderedBlocks = this.blocks.filter(({ render }) => render);
+                if (!renderedBlocks.length) {
+                    this.levelUp();
+                }
             }
         });
     }
@@ -94,13 +100,11 @@ export class App {
     }
 
     run() {
-        if (this.running) {
-            window.requestAnimationFrame(() => {
-                this.update();
-                this.render();
-                this.run();
-            });
-        }
+        window.requestAnimationFrame(() => {
+            this.update();
+            this.render();
+            this.run();
+        });
     }
 
     render() {
@@ -123,12 +127,21 @@ export class App {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
+    gameOver() {
+        alert('Вы проиграли!');
+        this.restart();
+    }
+
+    levelUp() {
+        alert('Вы победили!');
+        this.restart();
+    }
+
     restart() {
         this.createBlocks();
         this.renderBlocks();
         this.ball = new Ball(this);
         this.platform = new Platform(this);
-        this.running = true;
     }
 
     start() {
