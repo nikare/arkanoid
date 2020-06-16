@@ -5,10 +5,11 @@ import './app.scss';
 export class App {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
+    platform = new Platform(this);
+    ball = new Ball(this);
     background = new Image();
     imageBlock = new Image();
-    ball = new Ball(this);
-    platform = new Platform(this);
+    bumpSound = new Audio();
     width = 1280;
     height = 720;
     rows = 4;
@@ -25,6 +26,7 @@ export class App {
 
         this.background.src = require('./images/background.jpg');
         this.imageBlock.src = require('./images/block.png');
+        this.bumpSound.src = require('./audio/bump.mp3');
     }
 
     setEvents() {
@@ -43,11 +45,15 @@ export class App {
 
     preload(callback: () => void) {
         const images = [this.background, this.imageBlock, this.platform.image, this.ball.image];
-
+        const sounds = [this.bumpSound];
+        const resources = [...images, ...sounds];
         let loaded = 0;
-        images.forEach((img) => {
-            img.addEventListener('load', () => {
-                if (++loaded === images.length) {
+
+        resources.forEach((resource) => {
+            const eventType = resource.tagName === 'AUDIO' ? 'canplaythrough' : 'load';
+            resource.addEventListener(eventType, () => {
+                ++loaded;
+                if (loaded === resources.length) {
                     this.canvas.classList.add('loaded');
                     callback();
                 }
@@ -84,6 +90,7 @@ export class App {
             if (block.render && this.ball.collide(block)) {
                 this.ball.bumpBlock(block);
                 this.score += 10;
+                this.bumpSound.play();
 
                 const renderedBlocks = this.blocks.filter(({ render }) => render);
                 if (!renderedBlocks.length) {
@@ -96,6 +103,7 @@ export class App {
     collidePlatform() {
         if (this.ball.collide(this.platform)) {
             this.ball.bumpPlatform();
+            this.bumpSound.play();
         }
     }
 

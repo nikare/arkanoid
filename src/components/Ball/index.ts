@@ -72,6 +72,10 @@ export class Ball {
         } else if (ballBottom > worldBottom) {
             this.game.gameOver();
         }
+
+        if (ballLeft < worldLeft || ballRight > worldRight || ballTop < worldTop) {
+            this.game.bumpSound.play();
+        }
     }
 
     bumpBlock(block: IBlock) {
