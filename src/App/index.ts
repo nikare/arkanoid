@@ -17,7 +17,9 @@ export class App {
     level = 1;
     score = 0;
     record = 0;
+    running = false;
     wasted = false;
+    showLevel = false;
     platform = new Platform(this);
     ball = new Ball(this);
     blocks: IBlock[] = [];
@@ -130,7 +132,7 @@ export class App {
 
     run() {
         window.requestAnimationFrame(() => {
-            if (!this.wasted) {
+            if (this.running) {
                 this.update();
                 this.render();
             }
@@ -142,7 +144,7 @@ export class App {
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.drawImage(this.background, 0, 0, this.width, this.height);
 
-        if (!this.wasted) {
+        if (this.running) {
             this.renderBlocks();
             this.ctx.drawImage(this.platform.image, this.platform.x, this.platform.y);
             this.ctx.drawImage(this.ball.image, this.ball.x, this.ball.y);
@@ -166,16 +168,26 @@ export class App {
         this.ctx.textAlign = 'left';
         this.ctx.fillText(`Score: ${this.score}`, 30, 40);
 
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText(`Level ${this.level}`, this.width / 2, 40);
+        if (!this.showLevel) {
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText(`Level ${this.level}`, this.width / 2, 40);
+        }
 
         this.ctx.textAlign = 'right';
         this.ctx.fillText(`Best score: ${this.record}`, this.width - 30, 40);
 
-        if (this.wasted) {
-            this.ctx.font = '80px Arial';
+        if (!this.running) {
             this.ctx.textAlign = 'center';
-            this.ctx.fillText('Потрачено ;)', this.width / 2, this.height / 2);
+
+            if (this.wasted) {
+                this.ctx.font = '80px Arial';
+                this.ctx.fillText('Потрачено ;)', this.width / 2, this.height / 2);
+            }
+
+            if (this.showLevel) {
+                this.ctx.font = '120px Arial';
+                this.ctx.fillText(`Level ${this.level}`, this.width / 2, this.height / 2);
+            }
         }
     }
 
@@ -184,6 +196,7 @@ export class App {
     }
 
     gameOver() {
+        this.running = false;
         this.wasted = true;
 
         setTimeout(() => {
@@ -191,27 +204,38 @@ export class App {
             this.level = 1;
             this.addBestScore();
             this.restart();
-        }, 2500);
+        }, 3000);
     }
 
     levelUp() {
         ++this.level;
         this.applause.play();
-        this.restart();
+        this.running = false;
+        this.showLevel = true;
+
+        setTimeout(() => {
+            this.restart();
+            this.showLevel = false;
+        }, 5000);
     }
 
     addBestScore() {
         if (this.score > this.record) {
-            localStorage.setItem('Nikare Arkanoid Best Score', JSON.stringify(this.score));
             const { score } = this;
             this.score = 0;
+
+            try {
+                localStorage.setItem('Nikare Arkanoid Best Score', JSON.stringify(this.score));
+            } catch (error) {
+                console.error(error);
+            }
 
             const interval = setInterval(() => {
                 this.record += 10;
                 if (this.record === score) {
                     clearInterval(interval);
                 }
-            }, 50);
+            }, 25);
         }
     }
 
@@ -220,10 +244,12 @@ export class App {
         this.renderBlocks();
         this.ball = new Ball(this);
         this.platform = new Platform(this);
+        this.running = true;
     }
 
     start() {
         this.setEvents();
+        this.running = true;
         this.preload(() => {
             this.run();
             this.createBlocks();
