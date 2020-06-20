@@ -1,7 +1,6 @@
 import { Platform, Ball } from '../components';
 import { KEYS, IBlock } from '../interfaces';
 import './app.scss';
-import { runInThisContext } from 'vm';
 
 export class App {
     canvas: HTMLCanvasElement;
@@ -17,6 +16,8 @@ export class App {
     cols = 10;
     level = 1;
     score = 0;
+    record = 0;
+    wasted = false;
     platform = new Platform(this);
     ball = new Ball(this);
     blocks: IBlock[] = [];
@@ -34,6 +35,15 @@ export class App {
 
         this.canvas.width = this.width;
         this.canvas.height = this.height;
+
+        try {
+            const storageData = localStorage.getItem('Nikare Arkanoid Best Score');
+            if (storageData) {
+                this.record = +storageData;
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     setEvents() {
@@ -120,18 +130,24 @@ export class App {
 
     run() {
         window.requestAnimationFrame(() => {
-            this.update();
-            this.render();
+            if (!this.wasted) {
+                this.update();
+                this.render();
+            }
             this.run();
         });
     }
 
     render() {
         this.ctx.clearRect(0, 0, this.width, this.height);
-        this.ctx.drawImage(this.background, 0, 0, 1920, 1080, 0, 0, 1280, 720);
-        this.ctx.drawImage(this.platform.image, this.platform.x, this.platform.y);
-        this.ctx.drawImage(this.ball.image, this.ball.x, this.ball.y);
-        this.renderBlocks();
+        this.ctx.drawImage(this.background, 0, 0, this.width, this.height);
+
+        if (!this.wasted) {
+            this.renderBlocks();
+            this.ctx.drawImage(this.platform.image, this.platform.x, this.platform.y);
+            this.ctx.drawImage(this.ball.image, this.ball.x, this.ball.y);
+        }
+
         this.renderText();
     }
 
@@ -152,6 +168,15 @@ export class App {
 
         this.ctx.textAlign = 'center';
         this.ctx.fillText(`Level ${this.level}`, this.width / 2, 40);
+
+        this.ctx.textAlign = 'right';
+        this.ctx.fillText(`Best score: ${this.record}`, this.width - 30, 40);
+
+        if (this.wasted) {
+            this.ctx.font = '80px Arial';
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText('Потрачено ;)', this.width / 2, this.height / 2);
+        }
     }
 
     random(min: number, max: number) {
@@ -159,15 +184,34 @@ export class App {
     }
 
     gameOver() {
-        alert('Вы проиграли!');
-        this.score = 0;
-        this.restart();
+        this.wasted = true;
+
+        setTimeout(() => {
+            this.wasted = false;
+            this.addBestScore();
+            this.restart();
+        }, 2500);
     }
 
     levelUp() {
         ++this.level;
         this.applause.play();
         this.restart();
+    }
+
+    addBestScore() {
+        if (this.score > this.record) {
+            localStorage.setItem('Nikare Arkanoid Best Score', JSON.stringify(this.score));
+            const { score } = this;
+            this.score = 0;
+
+            const interval = setInterval(() => {
+                this.record += 10;
+                if (this.record === score) {
+                    clearInterval(interval);
+                }
+            }, 25);
+        }
     }
 
     restart() {

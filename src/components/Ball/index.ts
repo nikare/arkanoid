@@ -16,8 +16,6 @@ export class Ball {
     constructor(private game: App) {
         this.image.src = require('./ball.png');
         this.game = game;
-
-        console.log('Ball velocity: ', this.velocity);
     }
 
     start(random: number) {
