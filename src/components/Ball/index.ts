@@ -7,8 +7,8 @@ export class Ball {
     dx = 0;
     dy = 0;
     velocity = 10;
-    x: number;
-    y: number;
+    x = NaN;
+    y = NaN;
     width = 40;
     height = 40;
     running = false;
@@ -17,6 +17,10 @@ export class Ball {
         this.image.src = require('./ball.png');
         this.game = game;
 
+        this.initCoordinates();
+    }
+
+    initCoordinates() {
         this.x = (this.game.width - this.width) / 2;
         this.y = this.game.platform.y - this.game.platform.height;
     }

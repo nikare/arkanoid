@@ -9,6 +9,9 @@ body {
 }
 
 #canvas {
+    width: 100%;
+    height: auto;
+
     &:not(.loaded) {
         background: url('./images/loader.gif') 50% no-repeat;
     }

@@ -14,7 +14,7 @@ export class App {
     width = 1280;
     height = 720;
     rows = 6;
-    cols = 9;
+    cols = 10;
     score = 0;
     blocks: IBlock[] = [];
 
@@ -22,17 +22,29 @@ export class App {
         this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
         this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
 
-        this.canvas.width = this.width;
-        this.canvas.height = this.height;
-
         this.background.src = require('./images/background.png');
         this.imageBlock.src = require('./images/block.png');
 
         this.bumpSound.src = require('./audio/bump.mp3');
         this.boomSound.src = require('./audio/boom.mp3');
 
+        this.initSize();
+
         this.platform = new Platform(this);
         this.ball = new Ball(this);
+    }
+
+    initSize() {
+        const realWidth = window.innerWidth * window.devicePixelRatio;
+        const realHeight = window.innerHeight * window.devicePixelRatio;
+
+        const maxWidth = this.width;
+        const maxHeight = this.height;
+
+        this.height = Math.min(Math.floor((maxWidth * realHeight) / realWidth), maxHeight);
+
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
     }
 
     setEvents() {
@@ -44,8 +56,15 @@ export class App {
                 this.platform.start(event.keyCode);
             }
         });
+
         window.addEventListener('keyup', () => {
             this.platform.stop();
+        });
+
+        window.addEventListener('resize', () => {
+            this.initSize();
+            this.ball.initCoordinates();
+            this.platform.initCoordinates();
         });
     }
 
@@ -126,7 +145,7 @@ export class App {
 
     render() {
         this.ctx.clearRect(0, 0, this.width, this.height);
-        this.ctx.drawImage(this.background, 0, 0, this.width, this.height);
+        this.ctx.drawImage(this.background, 0, 0, 1920, 1080, 0, 0, 1280, 720);
         this.ctx.drawImage(this.platform.image, this.platform.x, this.platform.y);
         this.ctx.drawImage(this.ball.image, this.ball.x, this.ball.y);
         this.renderBlocks();

@@ -6,8 +6,8 @@ export class Platform {
     image = new Image();
     velocity = 15;
     dx = 0;
-    x: number;
-    y: number;
+    x = NaN;
+    y = NaN;
     width = 251;
     height = 41;
 
@@ -15,8 +15,12 @@ export class Platform {
         this.image.src = require('./platform.png');
         this.game = game;
 
+        this.initCoordinates();
+    }
+
+    initCoordinates() {
         this.x = (this.game.width - this.width) / 2;
-        this.y = this.game.height - (this.height + 32);
+        this.y = this.game.height - (this.height + 20);
     }
 
     fire(random: number) {
