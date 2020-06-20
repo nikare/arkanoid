@@ -1,21 +1,24 @@
 import { Platform, Ball } from '../components';
 import { KEYS, IBlock } from '../interfaces';
 import './app.scss';
+import { runInThisContext } from 'vm';
 
 export class App {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    platform: Platform;
-    ball: Ball;
     background = new Image();
     imageBlock = new Image();
     bumpSound = new Audio();
     boomSound = new Audio();
+    applause = new Audio();
     width = 1280;
     height = 720;
     rows = 6;
     cols = 10;
+    level = 1;
     score = 0;
+    platform = new Platform(this);
+    ball = new Ball(this);
     blocks: IBlock[] = [];
 
     constructor() {
@@ -27,21 +30,7 @@ export class App {
 
         this.bumpSound.src = require('./audio/bump.mp3');
         this.boomSound.src = require('./audio/boom.mp3');
-
-        this.initSize();
-
-        this.platform = new Platform(this);
-        this.ball = new Ball(this);
-    }
-
-    initSize() {
-        const realWidth = window.innerWidth * window.devicePixelRatio;
-        const realHeight = window.innerHeight * window.devicePixelRatio;
-
-        const maxWidth = this.width;
-        const maxHeight = this.height;
-
-        this.height = Math.min(Math.floor((maxWidth * realHeight) / realWidth), maxHeight);
+        this.applause.src = require('./audio/applause.mp3');
 
         this.canvas.width = this.width;
         this.canvas.height = this.height;
@@ -59,12 +48,6 @@ export class App {
 
         window.addEventListener('keyup', () => {
             this.platform.stop();
-        });
-
-        window.addEventListener('resize', () => {
-            this.initSize();
-            this.ball.initCoordinates();
-            this.platform.initCoordinates();
         });
     }
 
@@ -163,7 +146,12 @@ export class App {
     renderText() {
         this.ctx.fillStyle = '#fff';
         this.ctx.font = '24px Arial';
+
+        this.ctx.textAlign = 'left';
         this.ctx.fillText(`Score: ${this.score}`, 30, 40);
+
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText(`Level ${this.level}`, this.width / 2, 40);
     }
 
     random(min: number, max: number) {
@@ -172,18 +160,19 @@ export class App {
 
     gameOver() {
         alert('Вы проиграли!');
+        this.score = 0;
         this.restart();
     }
 
     levelUp() {
-        alert('Вы победили!');
+        ++this.level;
+        this.applause.play();
         this.restart();
     }
 
     restart() {
         this.createBlocks();
         this.renderBlocks();
-        this.score = 0;
         this.ball = new Ball(this);
         this.platform = new Platform(this);
     }

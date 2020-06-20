@@ -6,23 +6,18 @@ export class Ball {
     image = new Image();
     dx = 0;
     dy = 0;
-    velocity = 10;
-    x = NaN;
-    y = NaN;
+    velocity = this.game.level + 7;
     width = 40;
     height = 40;
+    x = (this.game.width - this.width) / 2;
+    y = this.game.platform.y - this.game.platform.height;
     running = false;
 
     constructor(private game: App) {
         this.image.src = require('./ball.png');
         this.game = game;
 
-        this.initCoordinates();
-    }
-
-    initCoordinates() {
-        this.x = (this.game.width - this.width) / 2;
-        this.y = this.game.platform.y - this.game.platform.height;
+        console.log('Ball velocity: ', this.velocity);
     }
 
     start(random: number) {
