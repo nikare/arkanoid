@@ -121,6 +121,7 @@ export class App {
         this.ctx.drawImage(this.platform.image, this.platform.x, this.platform.y);
         this.ctx.drawImage(this.ball.image, this.ball.x, this.ball.y);
         this.renderBlocks();
+        this.renderText();
     }
 
     renderBlocks() {
@@ -131,11 +132,18 @@ export class App {
         });
     }
 
+    renderText() {
+        this.ctx.fillStyle = '#fff';
+        this.ctx.font = '24px Arial';
+        this.ctx.fillText(`Score: ${this.score}`, 30, 40);
+    }
+
     random(min: number, max: number) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
     gameOver() {
+        this.score = 0;
         alert('Вы проиграли!');
         this.restart();
     }
