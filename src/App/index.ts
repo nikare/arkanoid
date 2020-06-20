@@ -10,6 +10,7 @@ export class App {
     background = new Image();
     imageBlock = new Image();
     bumpSound = new Audio();
+    boomSound = new Audio();
     width = 1280;
     height = 720;
     rows = 6;
@@ -24,9 +25,11 @@ export class App {
         this.canvas.width = this.width;
         this.canvas.height = this.height;
 
-        this.background.src = require('./images/background.jpg');
+        this.background.src = require('./images/background.png');
         this.imageBlock.src = require('./images/block.png');
+
         this.bumpSound.src = require('./audio/bump.mp3');
+        this.boomSound.src = require('./audio/boom.mp3');
 
         this.platform = new Platform(this);
         this.ball = new Ball(this);

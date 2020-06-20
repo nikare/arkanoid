@@ -73,6 +73,7 @@ export class Ball {
             this.y = 0;
             this.dy = this.velocity;
         } else if (ballBottom > worldBottom) {
+            this.game.boomSound.play();
             this.game.gameOver();
         }
 
