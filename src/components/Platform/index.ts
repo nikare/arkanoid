@@ -6,14 +6,17 @@ export class Platform {
     image = new Image();
     velocity = 15;
     dx = 0;
-    x = 514.5;
-    y = 647;
+    x: number;
+    y: number;
     width = 251;
     height = 41;
 
     constructor(private game: App) {
         this.image.src = require('./platform.png');
         this.game = game;
+
+        this.x = (this.game.width - this.width) / 2;
+        this.y = this.game.height - (this.height + 32);
     }
 
     fire(random: number) {

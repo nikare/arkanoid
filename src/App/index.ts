@@ -5,15 +5,15 @@ import './app.scss';
 export class App {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    platform = new Platform(this);
-    ball = new Ball(this);
+    platform: Platform;
+    ball: Ball;
     background = new Image();
     imageBlock = new Image();
     bumpSound = new Audio();
     width = 1280;
     height = 720;
-    rows = 4;
-    cols = 8;
+    rows = 6;
+    cols = 9;
     score = 0;
     blocks: IBlock[] = [];
 
@@ -27,6 +27,9 @@ export class App {
         this.background.src = require('./images/background.jpg');
         this.imageBlock.src = require('./images/block.png');
         this.bumpSound.src = require('./audio/bump.mp3');
+
+        this.platform = new Platform(this);
+        this.ball = new Ball(this);
     }
 
     setEvents() {
@@ -63,15 +66,18 @@ export class App {
 
     createBlocks() {
         this.blocks = [];
+
+        const width = 111;
+        const height = 39;
+        const indents = 4;
+        const marginTop = 90;
+        const side = (this.width - (width + indents) * this.cols) / 2;
+
         for (let row = this.rows; row--; ) {
             for (let col = this.cols; col--; ) {
-                this.blocks.push({
-                    x: 115 * col + 182,
-                    y: 44 * row + 90,
-                    width: 111,
-                    height: 39,
-                    render: true,
-                });
+                const x = (width + indents) * col + side;
+                const y = (height + indents) * row + marginTop;
+                this.blocks.push({ x, y, width, height, render: true });
             }
         }
     }

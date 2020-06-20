@@ -7,8 +7,8 @@ export class Ball {
     dx = 0;
     dy = 0;
     velocity = 10;
-    x = 620;
-    y = 607;
+    x: number;
+    y: number;
     width = 40;
     height = 40;
     running = false;
@@ -16,6 +16,9 @@ export class Ball {
     constructor(private game: App) {
         this.image.src = require('./ball.png');
         this.game = game;
+
+        this.x = (this.game.width - this.width) / 2;
+        this.y = this.game.platform.y - this.game.platform.height;
     }
 
     start(random: number) {
