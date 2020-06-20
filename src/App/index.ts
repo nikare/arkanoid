@@ -188,6 +188,7 @@ export class App {
 
         setTimeout(() => {
             this.wasted = false;
+            this.level = 1;
             this.addBestScore();
             this.restart();
         }, 2500);
@@ -210,7 +211,7 @@ export class App {
                 if (this.record === score) {
                     clearInterval(interval);
                 }
-            }, 25);
+            }, 50);
         }
     }
 
