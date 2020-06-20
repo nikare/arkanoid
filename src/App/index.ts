@@ -149,7 +149,6 @@ export class App {
     }
 
     gameOver() {
-        this.score = 0;
         alert('Вы проиграли!');
         this.restart();
     }
@@ -162,6 +161,7 @@ export class App {
     restart() {
         this.createBlocks();
         this.renderBlocks();
+        this.score = 0;
         this.ball = new Ball(this);
         this.platform = new Platform(this);
     }
