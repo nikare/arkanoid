@@ -38,6 +38,10 @@ export class App {
         this.canvas.width = this.width;
         this.canvas.height = this.height;
 
+        this.getRecord();
+    }
+
+    getRecord() {
         try {
             const storageData = localStorage.getItem('Nikare Arkanoid Best Score');
             if (storageData) {
@@ -86,7 +90,7 @@ export class App {
 
         const width = 111;
         const height = 39;
-        const indents = 4;
+        const indents = 2;
         const marginTop = 90;
         const side = (this.width - (width + indents) * this.cols) / 2;
 
@@ -221,9 +225,6 @@ export class App {
 
     addBestScore() {
         if (this.score > this.record) {
-            const { score } = this;
-            this.score = 0;
-
             try {
                 localStorage.setItem('Nikare Arkanoid Best Score', JSON.stringify(this.score));
             } catch (error) {
@@ -232,8 +233,9 @@ export class App {
 
             const interval = setInterval(() => {
                 this.record += 10;
-                if (this.record === score) {
+                if (this.record === this.score) {
                     clearInterval(interval);
+                    this.score = 0;
                 }
             }, 25);
         }
