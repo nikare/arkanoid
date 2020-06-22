@@ -235,16 +235,13 @@ export class App {
 
             const interval = setInterval(() => {
                 this.record += 10;
-                this.score -= 10;
 
                 if (this.record >= score) {
                     clearInterval(interval);
-                    this.score = 0;
                 }
             }, 25);
-        } else {
-            this.score = 0;
         }
+        this.score = 0;
     }
 
     restart() {
